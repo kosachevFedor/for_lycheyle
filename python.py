@@ -1,9 +1,14 @@
+import time
+
 import pygame
 import random
 import sqlite3
 
 
 pygame.init()
+
+
+
 def res_from_bd():
     connect = sqlite3.connect("/Users/clix7631/PycharmProjects/testAPI/my_test.db")
     cur = connect.cursor()
@@ -47,6 +52,13 @@ follow2 = my_font2.render("Продолжить игру", 1, (255, 0, 0))
 follow3 = my_font2.render("Начать заново", 1, (255, 0, 0))
 follow4 = my_font.render("Авторы: Лера и Федя", 1, (255, 0, 0), (0, 0, 0))
 follow6 = my_font.render("Лабиринт димасика - пивасика", 1, (255, 0, 0), (0, 0, 0))
+
+
+def last_win():
+    screen.fill((0, 0, 0))
+    screen.blit(img2, (0, 0))
+    pygame.mixer.music.load("zvyk_pip.mp3")
+    pygame.mixer.music.play(-1)
 
 def added_to_bd():
     connect = sqlite3.connect("/Users/clix7631/PycharmProjects/testAPI/my_test.db")
@@ -297,6 +309,8 @@ if not game_mode:
                             player_rect = None
                             completed = False
                             got_new = False
+
+                            hh = True
                             done = False
                             Tempcurrent = None
                             r = None
@@ -1040,7 +1054,8 @@ if not game_mode:
                                                                                                                             completed = False
                                                                                                                             got_new = False
                                                                                                                             game_mode = True
-                                                                                                                            done = False
+                                                                                                                            hh = True
+                                                                                                                            done = True
                                                                                                                             a += 1
                                                                                                                             player.colour = (
                                                                                                                                 0,
@@ -1051,12 +1066,25 @@ if not game_mode:
                                                                                                                                 0,
                                                                                                                                 0,
                                                                                                                                 0))
-                                                                                                                            screen.blit(img2, (0, 0))
-                                                                                                                            s = pygame.mixer.music.load(
-                                                                                                                                "zvyk_pip.mp3")
-                                                                                                                            pygame.mixer.music.play(
-                                                                                                                                -1)
+                                                                                                                            screen.blit(
+                                                                                                                                img2,
+                                                                                                                                (
+                                                                                                                                0,
+                                                                                                                                0))
 
+                                                                                                                            last_win()
+                                                                                                                            while a != 7:
+
+                                                                                                                                screen.blit(
+                                                                                                                                    img2,
+                                                                                                                                    (
+                                                                                                                                    0,
+                                                                                                                                    0))
+
+                                                                                                                                player.draw(
+                                                                                                                                    screen)
+                                                                                                                                player.update()
+                                                                                                                                pygame.display.flip()
 
                                                                                                                         player.draw(
                                                                                                                             screen)
