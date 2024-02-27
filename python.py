@@ -8,7 +8,7 @@ import sqlite3
 pygame.init()
 
 
-
+# вытягиваем из бд сколько пиво выпили
 def res_from_bd():
     connect = sqlite3.connect("/Users/clix7631/PycharmProjects/testAPI/my_test.db")
     cur = connect.cursor()
@@ -53,25 +53,25 @@ follow3 = my_font2.render("Начать заново", 1, (255, 0, 0))
 follow4 = my_font.render("Авторы: Лера и Федя", 1, (255, 0, 0), (0, 0, 0))
 follow6 = my_font.render("Лабиринт димасика - пивасика", 1, (255, 0, 0), (0, 0, 0))
 
-
+# функция с последним игровым окном
 def last_win():
     screen.fill((0, 0, 0))
     screen.blit(img2, (0, 0))
     pygame.mixer.music.load("zvyk_pip.mp3")
     pygame.mixer.music.play(-1)
-
+# функция для добавления в бд пиваса
 def added_to_bd():
     connect = sqlite3.connect("/Users/clix7631/PycharmProjects/testAPI/my_test.db")
     cur = connect.cursor()
     cur.execute("""UPDATE game_now SET pivo_score = pivo_score + 1""").fetchall()
     connect.commit()
-
+# функция для удаления результатов
 def delet_result():
     connect = sqlite3.connect("/Users/clix7631/PycharmProjects/testAPI/my_test.db")
     cur = connect.cursor()
     cur.execute("""UPDATE game_now SET pivo_score = 0""").fetchall()
     connect.commit()
-
+# Функция для открытия окна меню
 def start_ok():
     pep = res_from_bd()
     follow5 = my_font3.render(f"Димася уже выпил: {pep} пива", 1, (255, 0, 0), (0, 0, 0))
@@ -83,6 +83,7 @@ def start_ok():
     screen.blit(follow4, (250, 525))
     screen.blit(follow5, (200, 475))
     screen.blit(follow6, (100, 100))
+
 class Spot:
     def __init__(self, x, y):
         self.x = x
@@ -93,7 +94,7 @@ class Spot:
         self.neighbors = []
         self.visited = False
         self.walls = [True, True, True, True]
-
+    # Метод show визуализирует пятно, рисуя стены вокруг него на основе состояния стен в разных направлениях
     def show(self, color=BLACK):
         if self.walls[0]:
             pygame.draw.line(screen, color, [self.x * hr, self.y * wr], [self.x * hr + hr, self.y * wr], 2)
@@ -103,11 +104,12 @@ class Spot:
             pygame.draw.line(screen, color, [self.x * hr + hr, self.y * wr + wr], [self.x * hr, self.y * wr + wr], 2)
         if self.walls[3]:
             pygame.draw.line(screen, color, [self.x * hr, self.y * wr + wr], [self.x * hr, self.y * wr], 2)
-
+    # Метод show_block рисует прямоугольник, представляющий точку, если она была посещена
     def show_block(self, color):
         if self.visited:
             pygame.draw.rect(screen, color, [self.x * hr + 2, self.y * wr + 2, hr - 2, wr - 2])
 
+    # Метод add_neighbors заполняет neighbors
     def add_neighbors(self):
         if self.x > 0:
             self.neighbors.append(grid[self.x - 1][self.y])
@@ -118,7 +120,7 @@ class Spot:
         if self.y < cols - 1:
             self.neighbors.append(grid[self.x][self.y + 1])
 
-
+# Метод breakwalls предназначен разрушения стен между двумя объектами (ячейками) a и b
 def breakwalls(a, b):
     if a.y == b.y and a.x > b.x:
         grid[b.x][b.y].walls[1] = False
@@ -133,7 +135,7 @@ def breakwalls(a, b):
         grid[a.x][a.y].walls[0] = False
         grid[b.x][b.y].walls[2] = False
 
-
+# класс Player представляет объект player в игре
 class Player:
     def __init__(self, x, y):
         self.rect = screen.blit(img, (x, y))
@@ -147,10 +149,10 @@ class Player:
         self.up_pressed = False
         self.down_pressed = False
         self.speed = 5
-
+    # Метод draw рисует димасика на экране
     def draw(self, win):
         screen.blit(img, (self.rect))
-
+    # Метод update на основе скорости velX и velY и условий движения на основе нажатий клавиш Он корректирует положение игрока по x и y
     def update(self):
         self.velX = 0
         self.velY = 0
@@ -168,7 +170,7 @@ class Player:
 
         self.rect = pygame.Rect(self.x, self.y, hr - 2, wr - 2)
 
-
+# сам игровой цикл, тьмаааааааа
 if not game_mode:
     start_ok()
     while not done:
