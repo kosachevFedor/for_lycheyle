@@ -4,16 +4,17 @@ import pygame
 import random
 import sqlite3
 
-
 pygame.init()
 
 
 # вытягиваем из бд сколько пиво выпили
 def res_from_bd():
-    connect = sqlite3.connect("/Users/clix7631/PycharmProjects/testAPI/my_test.db")
+    connect = sqlite3.connect("my_test.db")
     cur = connect.cursor()
     result = cur.execute("""SELECT pivo_score FROM game_now""").fetchall()
     return result[0][0]
+
+
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 BLUE = (0, 0, 255)
@@ -38,9 +39,9 @@ active_color = (13, 122, 58)
 inactive_color = (13, 122, 58)
 font = pygame.font.Font(None, 50)
 
-img = pygame.image.load('/Users/clix7631/PycharmProjects/testAPI/photo_2024-02-25_21-39-47.jpg')
-img2 = pygame.image.load('/Users/clix7631/PycharmProjects/testAPI/photo_2024-01-29_20-28-29.jpg')
-img3 = pygame.image.load('/Users/clix7631/PycharmProjects/testAPI/photo_2024-01-02_16-47-27.jpg')
+img = pygame.image.load('photo_2024-02-25_21-39-47.jpg')
+img2 = pygame.image.load('photo_2024-01-29_20-28-29.jpg')
+img3 = pygame.image.load('photo_2024-01-02_16-47-27.jpg')
 img = pygame.transform.scale(img, (55, 55))
 img2 = pygame.transform.scale(img2, (600, 600))
 img3 = pygame.transform.scale(img3, (60, 60))
@@ -53,24 +54,31 @@ follow3 = my_font2.render("Начать заново", 1, (255, 0, 0))
 follow4 = my_font.render("Авторы: Лера и Федя", 1, (255, 0, 0), (0, 0, 0))
 follow6 = my_font.render("Лабиринт димасика - пивасика", 1, (255, 0, 0), (0, 0, 0))
 
+
 # функция с последним игровым окном
 def last_win():
     screen.fill((0, 0, 0))
     screen.blit(img2, (0, 0))
     pygame.mixer.music.load("zvyk_pip.mp3")
     pygame.mixer.music.play(-1)
+
+
 # функция для добавления в бд пиваса
 def added_to_bd():
-    connect = sqlite3.connect("/Users/clix7631/PycharmProjects/testAPI/my_test.db")
+    connect = sqlite3.connect("my_test.db")
     cur = connect.cursor()
     cur.execute("""UPDATE game_now SET pivo_score = pivo_score + 1""").fetchall()
     connect.commit()
+
+
 # функция для удаления результатов
 def delet_result():
-    connect = sqlite3.connect("/Users/clix7631/PycharmProjects/testAPI/my_test.db")
+    connect = sqlite3.connect("my_test.db")
     cur = connect.cursor()
     cur.execute("""UPDATE game_now SET pivo_score = 0""").fetchall()
     connect.commit()
+
+
 # Функция для открытия окна меню
 def start_ok():
     pep = res_from_bd()
@@ -84,6 +92,7 @@ def start_ok():
     screen.blit(follow5, (200, 475))
     screen.blit(follow6, (100, 100))
 
+
 class Spot:
     def __init__(self, x, y):
         self.x = x
@@ -94,6 +103,7 @@ class Spot:
         self.neighbors = []
         self.visited = False
         self.walls = [True, True, True, True]
+
     # Метод show визуализирует пятно, рисуя стены вокруг него на основе состояния стен в разных направлениях
     def show(self, color=BLACK):
         if self.walls[0]:
@@ -104,6 +114,7 @@ class Spot:
             pygame.draw.line(screen, color, [self.x * hr + hr, self.y * wr + wr], [self.x * hr, self.y * wr + wr], 2)
         if self.walls[3]:
             pygame.draw.line(screen, color, [self.x * hr, self.y * wr + wr], [self.x * hr, self.y * wr], 2)
+
     # Метод show_block рисует прямоугольник, представляющий точку, если она была посещена
     def show_block(self, color):
         if self.visited:
@@ -120,6 +131,7 @@ class Spot:
         if self.y < cols - 1:
             self.neighbors.append(grid[self.x][self.y + 1])
 
+
 # Метод breakwalls предназначен разрушения стен между двумя объектами (ячейками) a и b
 def breakwalls(a, b):
     if a.y == b.y and a.x > b.x:
@@ -135,6 +147,7 @@ def breakwalls(a, b):
         grid[a.x][a.y].walls[0] = False
         grid[b.x][b.y].walls[2] = False
 
+
 # класс Player представляет объект player в игре
 class Player:
     def __init__(self, x, y):
@@ -149,9 +162,11 @@ class Player:
         self.up_pressed = False
         self.down_pressed = False
         self.speed = 5
+
     # Метод draw рисует димасика на экране
     def draw(self, win):
         screen.blit(img, (self.rect))
+
     # Метод update на основе скорости velX и velY и условий движения на основе нажатий клавиш Он корректирует положение игрока по x и y
     def update(self):
         self.velX = 0
@@ -169,6 +184,7 @@ class Player:
         self.y += self.velY
 
         self.rect = pygame.Rect(self.x, self.y, hr - 2, wr - 2)
+
 
 # сам игровой цикл, тьмаааааааа
 if not game_mode:
@@ -649,8 +665,8 @@ if not game_mode:
                                                                                                             0,
                                                                                                             len(current.neighbors) - 1)
                                                                                                         Tempcurrent = \
-                                                                                                        current.neighbors[
-                                                                                                            r]
+                                                                                                            current.neighbors[
+                                                                                                                r]
                                                                                                         if not Tempcurrent.visited:
                                                                                                             visited.append(
                                                                                                                 current)
@@ -715,12 +731,12 @@ if not game_mode:
                                                                                                         wr - 2):
                                                                                                     player.right_pressed = False
                                                                                                     player.x = width - (
-                                                                                                                wr - 2)
+                                                                                                            wr - 2)
                                                                                                 if player.y >= height - (
                                                                                                         wr - 2):
                                                                                                     player.down_pressed = False
                                                                                                     player.y = height - (
-                                                                                                                wr - 2)
+                                                                                                            wr - 2)
                                                                                                 player_rect = pygame.Rect(
                                                                                                     player.x, player.y,
                                                                                                     wr - 3, hr - 3)
@@ -736,9 +752,13 @@ if not game_mode:
 
                                                                                                 if player.left_pressed and player_rect.x < xC * wr + 2:
                                                                                                     if \
-                                                                                                    grid[xC][y0].walls[
-                                                                                                        3] or grid[xC][
-                                                                                                        y1].walls[3]:
+                                                                                                            grid[xC][
+                                                                                                                y0].walls[
+                                                                                                                3] or \
+                                                                                                                    grid[
+                                                                                                                        xC][
+                                                                                                                        y1].walls[
+                                                                                                                        3]:
                                                                                                         player.x = xC * wr + 2
                                                                                                         player.left_pressed = False
                                                                                                     if player.y != yC * hr + 2 and \
@@ -750,9 +770,13 @@ if not game_mode:
 
                                                                                                 if player.right_pressed and player_rect.x > xC * wr + 2:
                                                                                                     if \
-                                                                                                    grid[xC][y0].walls[
-                                                                                                        1] or grid[xC][
-                                                                                                        y1].walls[1]:
+                                                                                                            grid[xC][
+                                                                                                                y0].walls[
+                                                                                                                1] or \
+                                                                                                                    grid[
+                                                                                                                        xC][
+                                                                                                                        y1].walls[
+                                                                                                                        1]:
                                                                                                         player.x = xC * wr + 2
                                                                                                         player.right_pressed = False
                                                                                                     if player.y != yC * hr + 2 and \
@@ -765,9 +789,13 @@ if not game_mode:
 
                                                                                                 if player.up_pressed and player_rect.y < yC * hr + 2:
                                                                                                     if \
-                                                                                                    grid[x0][yC].walls[
-                                                                                                        0] or grid[x1][
-                                                                                                        yC].walls[0]:
+                                                                                                            grid[x0][
+                                                                                                                yC].walls[
+                                                                                                                0] or \
+                                                                                                                    grid[
+                                                                                                                        x1][
+                                                                                                                        yC].walls[
+                                                                                                                        0]:
                                                                                                         player.y = yC * hr + 2
                                                                                                         player.up_pressed = False
                                                                                                     if player.x != xC * wr + 2 and \
@@ -779,9 +807,13 @@ if not game_mode:
 
                                                                                                 if player.down_pressed and player_rect.y > yC * hr + 2:
                                                                                                     if \
-                                                                                                    grid[x0][yC].walls[
-                                                                                                        2] or grid[x1][
-                                                                                                        yC].walls[2]:
+                                                                                                            grid[x0][
+                                                                                                                yC].walls[
+                                                                                                                2] or \
+                                                                                                                    grid[
+                                                                                                                        x1][
+                                                                                                                        yC].walls[
+                                                                                                                        2]:
                                                                                                         player.y = yC * hr + 2
                                                                                                         player.down_pressed = False
                                                                                                     if player.x != xC * wr + 2 and \
@@ -790,7 +822,8 @@ if not game_mode:
                                                                                                                 3]:
                                                                                                         player.y = yC * hr + 2
                                                                                                         player.down_pressed = False
-                                                                                                screen.blit(img3, (540, 540))
+                                                                                                screen.blit(img3,
+                                                                                                            (540, 540))
                                                                                                 if (
                                                                                                         player_rect.y <= 542 and player_rect.x <= 542) and \
                                                                                                         (
@@ -806,7 +839,7 @@ if not game_mode:
                                                                                                     done = False
                                                                                                     a += 1
                                                                                                     player.colour = (
-                                                                                                    0, 0, 0)
+                                                                                                        0, 0, 0)
                                                                                                     screen.fill(
                                                                                                         (0, 0, 0))
                                                                                                     start_ok()
@@ -847,9 +880,9 @@ if not game_mode:
                                                                                                                                 j].add_neighbors()
 
                                                                                                                     current = \
-                                                                                                                    grid[
-                                                                                                                        0][
-                                                                                                                        0]
+                                                                                                                        grid[
+                                                                                                                            0][
+                                                                                                                            0]
                                                                                                                     visited = [
                                                                                                                         current]
                                                                                                                     completed = False
@@ -1043,7 +1076,11 @@ if not game_mode:
                                                                                                                                         3]:
                                                                                                                                 player.y = yC * hr + 2
                                                                                                                                 player.down_pressed = False
-                                                                                                                        screen.blit(img3, (540, 540))
+                                                                                                                        screen.blit(
+                                                                                                                            img3,
+                                                                                                                            (
+                                                                                                                            540,
+                                                                                                                            540))
                                                                                                                         if (
                                                                                                                                 player_rect.y <= 542 and player_rect.x <= 542) and \
                                                                                                                                 (
@@ -1065,28 +1102,30 @@ if not game_mode:
                                                                                                                                 0)
                                                                                                                             screen.fill(
                                                                                                                                 (
-                                                                                                                                0,
-                                                                                                                                0,
-                                                                                                                                0))
+                                                                                                                                    0,
+                                                                                                                                    0,
+                                                                                                                                    0))
                                                                                                                             screen.blit(
                                                                                                                                 img2,
                                                                                                                                 (
-                                                                                                                                0,
-                                                                                                                                0))
+                                                                                                                                    0,
+                                                                                                                                    0))
 
                                                                                                                             last_win()
                                                                                                                             while a != 7:
-
                                                                                                                                 screen.blit(
                                                                                                                                     img2,
                                                                                                                                     (
-                                                                                                                                    0,
-                                                                                                                                    0))
+                                                                                                                                        0,
+                                                                                                                                        0))
 
                                                                                                                                 player.draw(
                                                                                                                                     screen)
                                                                                                                                 player.update()
                                                                                                                                 pygame.display.flip()
+                                                                                                                                time.sleep(
+                                                                                                                                    3)
+                                                                                                                                pygame.quit()
 
                                                                                                                         player.draw(
                                                                                                                             screen)
@@ -1112,16 +1151,16 @@ if not game_mode:
                                                                                                                             255,
                                                                                                                             255),
                                                                                                                         (
-                                                                                                                        300,
-                                                                                                                        200,
-                                                                                                                        200,
-                                                                                                                        50),
+                                                                                                                            300,
+                                                                                                                            200,
+                                                                                                                            200,
+                                                                                                                            50),
                                                                                                                         500)
                                                                                                                     screen.blit(
                                                                                                                         follow2,
                                                                                                                         (
-                                                                                                                        315,
-                                                                                                                        205))
+                                                                                                                            315,
+                                                                                                                            205))
                                                                                                                 elif 500 > \
                                                                                                                         event.pos[
                                                                                                                             0] > 300 and 320 > \
@@ -1134,16 +1173,16 @@ if not game_mode:
                                                                                                                             255,
                                                                                                                             255),
                                                                                                                         (
-                                                                                                                        300,
-                                                                                                                        270,
-                                                                                                                        200,
-                                                                                                                        50),
+                                                                                                                            300,
+                                                                                                                            270,
+                                                                                                                            200,
+                                                                                                                            50),
                                                                                                                         500)
                                                                                                                     screen.blit(
                                                                                                                         follow3,
                                                                                                                         (
-                                                                                                                        330,
-                                                                                                                        275))
+                                                                                                                            330,
+                                                                                                                            275))
                                                                                                                 pygame.display.update()
 
                                                                                                 player.draw(screen)
@@ -1183,7 +1222,6 @@ if not game_mode:
                                                                                                             (330, 275))
                                                                                             pygame.display.update()
 
-
                                                                                             player.draw(screen)
                                                                                             player.update()
                                                                                             pygame.display.flip()
@@ -1197,8 +1235,9 @@ if not game_mode:
                                                                                             0] > 300 and 250 > \
                                                                                                 event.pos[1] > 200:
                                                                                             pygame.draw.rect(screen, (
-                                                                                            255, 255, 255), (300, 200,
-                                                                                                             200, 50),
+                                                                                                255, 255, 255),
+                                                                                                             (300, 200,
+                                                                                                              200, 50),
                                                                                                              500)
                                                                                             screen.blit(follow2,
                                                                                                         (315, 205))
@@ -1206,8 +1245,9 @@ if not game_mode:
                                                                                             0] > 300 and 320 > \
                                                                                                 event.pos[1] > 270:
                                                                                             pygame.draw.rect(screen, (
-                                                                                            255, 255, 255), (300, 270,
-                                                                                                             200, 50),
+                                                                                                255, 255, 255),
+                                                                                                             (300, 270,
+                                                                                                              200, 50),
                                                                                                              500)
                                                                                             screen.blit(follow3,
                                                                                                         (330, 275))
